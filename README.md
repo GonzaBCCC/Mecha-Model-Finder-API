@@ -20,31 +20,34 @@ This full-stack app showcases a custom RESTful API for anime model kit data. It 
 * pip package manager
 ## Installation
 1. Clone this repository
-```python
-git clone [https://github.com/GonzaBCCC/Mecha-Model-Finder-API.git](https://github.com/GonzaBCCC/Mecha-Model-Finder-API.git)
-cd Mecha-Model-Finder-API
-```
+   ```python
+   git clone [https://github.com/GonzaBCCC/Mecha-Model-Finder-API.git](https://github.com/GonzaBCCC/Mecha-Model-Finder-API.git)
+   cd Mecha-Model-Finder-API
+   ```
 
 2. Install the required Python packages:
-```python
-pip install Flask Flask-Cors requests beautifulsoup4
-```
+   ```python
+   pip install Flask Flask-Cors requests beautifulsoup4
+   ```
 ## Running the Project
 1. Start the API:
-Open a terminal in the project directory and run the Flask application:
-```python
-python mecha-model-finder-api.py
-```
-The API will be running at ```http://127.0.0.1:5000```.
+
+   Open a terminal in the project directory and run the Flask application:
+   ```python
+   python mecha-model-finder-api.py
+   ```
+   The API will be running at ```http://127.0.0.1:5000```.
+
 2. View the Front-end:
-Open the ```index.html``` file in your web browser. You can use a local web server for a better experience, but simply opening the file will also work.
+
+   Open the ```index.html``` file in your web browser. You can use a local web server for a better experience, but simply opening the file will also work.
 # How to Use the API
 You can interact with the API using a tool like Postman or curl.
-* ```GET http://127.0.0.1:5000/kits``` - Retrieve all kits.
-* ```GET http://127.0.0.1:5000/kits/<kit_id>``` - Retrieve a single kit by its ID.
-* ```POST http://127.0.0.1:5000/kits``` - Create a new kit. (Requires JSON body)
-* ```PUT http://127.0.0.1:5000/kits/<kit_id>``` - Update an existing kit. (Requires JSON body)
-* ```DELETE http://127.0.0.1:5000/kits/<kit_id>``` - Delete a kit.
+   * ```GET http://127.0.0.1:5000/kits``` - Retrieve all kits.
+   * ```GET http://127.0.0.1:5000/kits/<kit_id>``` - Retrieve a single kit by its ID.
+   * ```POST http://127.0.0.1:5000/kits``` - Create a new kit. (Requires JSON body)
+   * ```PUT http://127.0.0.1:5000/kits/<kit_id>``` - Update an existing kit. (Requires JSON body)
+   * ```DELETE http://127.0.0.1:5000/kits/<kit_id>``` - Delete a kit.
 
 # License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
