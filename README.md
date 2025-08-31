@@ -33,7 +33,7 @@ pip install Flask Flask-Cors requests beautifulsoup4
 1. Start the API:
 Open a terminal in the project directory and run the Flask application:
 ```python
-python scalemates_api.py
+python mecha-model-finder-api.py
 ```
 The API will be running at ```http://127.0.0.1:5000```.
 2. View the Front-end:
