@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Model Kit Database</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="container mx-auto px-4 max-w-7xl">
+        <header class="text-center my-8">
+            <h1 class="text-5xl md:text-6xl font-extrabold text-gray-800 tracking-tight">
+                Anime Model Kit Database
+            </h1>
+            <p class="mt-4 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+                Discover a curated list of popular anime model kits, fetched from our custom-built API.
+            </p>
+        </header>
+
+        <div class="mb-8">
+            <div class="relative max-w-xl mx-auto">
+                <input type="text" id="series-search" placeholder="Search by series (e.g., 'Gundam')"
+                       class="w-full pl-12 pr-4 py-3 rounded-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 shadow-sm" />
+                <div class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                    <!-- Search icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
+            </div>
+        </div>
+
+        <main id="kit-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Kit cards will be injected here by JavaScript -->
+        </main>
+
+        <div id="loading" class="text-center text-gray-500 mt-8" style="display: none;">
+            <p>Loading kits...</p>
+        </div>
+
+        <div id="error" class="text-center text-red-500 mt-8" style="display: none;">
+            <p>Failed to load data. Please check the API URL and try again.</p>
+        </div>
+    </div>
+
+    <!-- Modal for Kit Details -->
+    <div id="kit-modal" class="fixed inset-0 z-50 overflow-y-auto modal-overlay hidden">
+        <div class="flex items-center justify-center min-h-screen px-4 py-6">
+            <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full p-8 relative">
+                <button id="close-modal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <div id="modal-content">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const kitList = document.getElementById('kit-list');
+            const loadingIndicator = document.getElementById('loading');
+            const errorIndicator = document.getElementById('error');
+            const searchInput = document.getElementById('series-search');
+            const kitModal = document.getElementById('kit-modal');
+            const modalContent = document.getElementById('modal-content');
+            const closeModalBtn = document.getElementById('close-modal');
+
+            // Replace this with the actual URL of your deployed API
+            const API_URL = 'http://127.0.0.1:5000/kits';
+
+            let kitsData = [];
+
+            const fetchData = async (series = '') => {
+                kitList.innerHTML = '';
+                loadingIndicator.style.display = 'block';
+                errorIndicator.style.display = 'none';
+
+                let url = API_URL;
+                if (series) {
+                    url += `?series=${encodeURIComponent(series)}`;
+                }
+
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    kitsData = data.kits;
+                    renderKits(kitsData);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    errorIndicator.style.display = 'block';
+                } finally {
+                    loadingIndicator.style.display = 'none';
+                }
+            };
+
+            const renderKits = (kits) => {
+                if (kits.length === 0) {
+                    kitList.innerHTML = '<p class="text-center text-gray-500 w-full col-span-full">No kits found. Try a different series.</p>';
+                    return;
+                }
+
+                kits.forEach(kit => {
+                    const card = document.createElement('div');
+                    card.className = 'card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col items-center p-4 transform';
+                    card.innerHTML = `
+                        <img src="${kit.image_url}" onerror="this.onerror=null; this.src='https://placehold.co/200x200/e5e7eb/4b5563?text=Image+Not+Found';" alt="Image of ${kit.name}" class="rounded-lg w-full max-h-48 object-contain">
+                        <div class="p-4 w-full">
+                            <h2 class="text-xl font-bold text-gray-800 truncate">${kit.name}</h2>
+                            <p class="text-sm text-gray-500 truncate mt-1">Series: ${kit.series}</p>
+                            <p class="text-sm text-gray-500 truncate mt-1">Scale: ${kit.scale}</p>
+                            <p class="text-sm text-gray-500 truncate mt-1">Manufacturer: ${kit.manufacturer}</p>
+                            <p class="text-sm text-gray-500 truncate mt-1">Release Year: ${kit.release_year}</p>
+                            <p class="text-sm text-gray-500 truncate mt-1">Price: $${kit.price}</p>
+                        </div>
+                    `;
+                    card.addEventListener('click', () => showKitDetails(kit.id));
+                    kitList.appendChild(card);
+                });
+            };
+
+            const showKitDetails = async (kitId) => {
+                // Fetch the specific kit data from the API
+                const url = `${API_URL}/${kitId}`;
+                modalContent.innerHTML = `<p class="text-center text-gray-500">Loading details...</p>`;
+                kitModal.classList.remove('hidden');
+
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    const kit = data.kit;
+
+                    // Render the detailed view inside the modal
+                    modalContent.innerHTML = `
+                        <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8">
+                            <img src="${kit.image_url}" onerror="this.onerror=null; this.src='https://placehold.co/400x400/e5e7eb/4b5563?text=Image+Not+Found';" alt="Image of ${kit.name}" class="rounded-xl w-full md:w-1/2 object-contain shadow-lg">
+                            <div class="flex-1 text-center md:text-left">
+                                <h2 class="text-4xl font-extrabold text-gray-800 mb-2">${kit.name}</h2>
+                                <p class="text-lg text-gray-600 mb-1"><strong>Series:</strong> ${kit.series}</p>
+                                <p class="text-lg text-gray-600 mb-1"><strong>Scale:</strong> ${kit.scale}</p>
+                                <p class="text-lg text-gray-600 mb-1"><strong>Manufacturer:</strong> ${kit.manufacturer}</p>
+                                <p class="text-lg text-gray-600 mb-1"><strong>Release Year:</strong> ${kit.release_year}</p>
+                                <p class="text-lg text-gray-600 mb-4"><strong>Price:</strong> $${kit.price}</p>
+                                <p class="text-sm text-gray-500">
+                                    <span class="font-bold">ID:</span> ${kit.id}
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Error fetching kit details:', error);
+                    modalContent.innerHTML = `<p class="text-center text-red-500">Failed to load kit details. Please try again.</p>`;
+                }
+            };
+
+            // Close modal button
+            closeModalBtn.addEventListener('click', () => {
+                kitModal.classList.add('hidden');
+            });
+
+            // Close modal when clicking outside of it
+            kitModal.addEventListener('click', (event) => {
+                if (event.target === kitModal) {
+                    kitModal.classList.add('hidden');
+                }
+            });
+
+            // Initial data fetch
+            fetchData();
+
+            // Add event listener for the search input with a debounce
+            let debounceTimer;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    fetchData(searchInput.value);
+                }, 500); // 500ms debounce
+            });
+        });
+    </script>
+</body>
+</html>
