@@ -45,5 +45,6 @@ You can interact with the API using a tool like Postman or curl.
 * ```POST http://127.0.0.1:5000/kits``` - Create a new kit. (Requires JSON body)
 * ```PUT http://127.0.0.1:5000/kits/<kit_id>``` - Update an existing kit. (Requires JSON body)
 * ```DELETE http://127.0.0.1:5000/kits/<kit_id>``` - Delete a kit.
-#License
-This project is licensed under the MIT License. See the LICENSE file for details.
+
+# License
+This project is licensed under the MIT License. See the [LICENSE](../blob/master/LICENSE) file for details.
