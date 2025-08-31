@@ -47,4 +47,4 @@ You can interact with the API using a tool like Postman or curl.
 * ```DELETE http://127.0.0.1:5000/kits/<kit_id>``` - Delete a kit.
 
 # License
-This project is licensed under the MIT License. See the [LICENSE](../blob/master/LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
