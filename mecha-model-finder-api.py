@@ -1,5 +1,6 @@
 # Import necessary modules from Flask and other libraries
 from flask import Flask, jsonify, request, url_for
+from flask_cors import CORS
 import json
 
 # Initialize the Flask application
